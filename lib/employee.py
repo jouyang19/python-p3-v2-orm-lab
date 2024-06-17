@@ -55,7 +55,7 @@ class Employee:
             self._department_id = department_id
         else:
             raise ValueError(
-                "department_id must reference a department in the database")
+                "Department ID must reference a department in the database")
 
     @classmethod
     def create_table(cls):
@@ -187,4 +187,12 @@ class Employee:
 
     def reviews(self):
         """Return list of reviews associated with current employee"""
-        pass
+        from review import Review
+        sql = """
+            SELECT *
+            FROM reviews
+            WHERE employee_id = ?
+        """
+        reviews = CURSOR.execute(sql, (self.id,)).fetchall()
+        return [Review.instance_from_db(review) for review in reviews]
+        
